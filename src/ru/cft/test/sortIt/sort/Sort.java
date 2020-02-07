@@ -1,19 +1,29 @@
 package ru.cft.test.sortIt.sort;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class Sort<T> {
-    private T[][] array;
+    Scanner[] scanners;
 
-    public Sort(T[][] array) {
-        this.array = Arrays.copyOf(array, array.length);
+    public Sort(Scanner[] scanners) {
+        this.scanners = Arrays.copyOf(scanners, scanners.length);
     }
 
     public T[] sort() {
-        for (int i = 0; i < array.length; i++) {
-a
+        ArrayList<T> arList = new ArrayList<>();
+
+        T[] dataArray = (T[]) new Object[scanners.length];;
+
+        for (int i = 0; i < scanners.length; i++) {
+            dataArray[i] = readNext(i);
         }
 
-        return null;
+
+    }
+
+    private T readNext(int index) {
+        return (T) scanners[index].next();
     }
 }
