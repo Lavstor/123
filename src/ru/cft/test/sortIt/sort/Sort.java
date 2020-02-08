@@ -2,14 +2,10 @@ package ru.cft.test.sortIt.sort;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Scanner;
+import java.util.*;
 
-public class Sort<T> {
+public class Sort {
     private ArrayList<Scanner> scanners;
-    private Comparator<T> comparator;
 
     public Sort(String[] passArray) {
         scanners = new ArrayList<>();
@@ -21,68 +17,37 @@ public class Sort<T> {
                 e.printStackTrace();
             }
         }
-
-        createComparator();
     }
 
     public void sort() {
-        //noinspection unchecked
-        T[] dataArray = (T[]) new Object[scanners.size()];
+        List<Integer> list = new ArrayList<>();
 
         for (int i = 0; i < scanners.size(); i++) {
-            dataArray[i] = readNext(i);
+            list.add( readNext(i));
         }
 
-        int indexDelete = 1;
-        while (!scanners.isEmpty()) {
+        int indexDelete = 0;
+        while (!list.isEmpty()) {
+            int nextData = list.get(indexDelete);
 
-            T nextData = dataArray[indexDelete];
-
-            for (int i = 0; i < dataArray.length; i++) {
-                if (comparator.compare(nextData, dataArray[i]) > 0) {
-                    nextData = dataArray[i];
+            for (int i = 0; i < list.size(); i++) {
+                if (nextData < list.get(i)) {
+                    nextData = list.get(i);
                     indexDelete = i;
                 }
             }
 
             if (scanners.get(indexDelete).hasNext()) {
-                dataArray[indexDelete] = readNext(indexDelete);
-            } else {
-                dataArray[indexDelete] = null;
+                list.set(indexDelete, readNext(indexDelete));
+            } else{
+                list.remove(indexDelete);
             }
+
             System.out.println(nextData);
-
-            if(nextData == null){
-                break;
-            }
-
-
         }
     }
 
-    private T readNext(int index) {
-        //noinspection unchecked
-        return (T) scanners.get(index).next();
-    }
-
-    private void createComparator() {
-        this.comparator = (o1, o2) -> {
-            if (o1 == null && o2 == null) {
-                return 0;
-            }
-
-            if (o1 == null) {
-                return -1;
-            }
-
-            if (o2 == null) {
-                return 1;
-            }
-
-            @SuppressWarnings("unchecked")
-            Comparable<T> object1 = (Comparable<T>) o1;
-
-            return object1.compareTo(o2);
-        };
+    private int readNext(int index) {
+        return scanners.get(index).nextInt();
     }
 }
