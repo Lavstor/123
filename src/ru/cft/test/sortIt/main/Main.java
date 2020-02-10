@@ -27,6 +27,6 @@ public class Main {
             }
         }
 
-        new Sort(passes, mode).sort();
+        new Sort(passes, mode).sort("-s");
     }
 }

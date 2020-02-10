@@ -6,7 +6,7 @@ import java.util.*;
 
 public class Sort<T> {
     private ArrayList<Scanner> scanners;
-    private Comparator<T> comparator;
+    private Comparator<String> comparator;
     private String mode = "-a";
 
     private final LinkedList<String> passes;
@@ -26,24 +26,26 @@ public class Sort<T> {
         createComparator(mode);
     }
 
-    public void sort() {
-        ArrayList<Integer> list = new ArrayList<>();
-        scanners.forEach(e -> list.add(e.nextInt()));
+    public void sort(String mode2) {
+        ArrayList<String> list = new ArrayList<String>();;
+        String data;
 
-        T data;
-        T lastData = null;
+        scanners.forEach(e -> list.add(e.nextLine()));
+
+
+        String lastData = null;
         int index;
 
         while (!list.isEmpty()) {
             index = 0;
-            //noinspection unchecked
-            data = (T) list.get(0);
+
+            data = list.get(0);
 
             for (int i = 0; i < list.size(); i++) {
-                //noinspection unchecked
-                if (comparator.compare((T) list.get(i), data) < 0) {
-                    //noinspection unchecked
-                    data = (T) list.get(i);
+
+                if (comparator.compare(list.get(i),  data) < 0) {
+
+                    data = list.get(i);
                     index = i;
                 }
             }
@@ -57,7 +59,7 @@ public class Sort<T> {
             }
 
             if (scanners.get(index).hasNext()) {
-                list.set(index, scanners.get(index).nextInt());
+                list.set(index, scanners.get(index).nextLine());
             } else {
                 scanners.remove(index);
                 list.remove(index);
@@ -79,17 +81,7 @@ public class Sort<T> {
                 return 1;
             }
 
-            if (mode.equals("-d")) {
-                @SuppressWarnings("unchecked")
-                Comparable<T> object2 = (Comparable<T>) o2;
-
-                return object2.compareTo(o1);
-            }
-
-            @SuppressWarnings("unchecked")
-            Comparable<T> object1 = (Comparable<T>) o1;
-
-            return object1.compareTo(o2);
+            return mode.equals("-d")?((Comparable<String>) o2).compareTo(o1):((Comparable<String>) o1).compareTo(o2);
         };
     }
 }
