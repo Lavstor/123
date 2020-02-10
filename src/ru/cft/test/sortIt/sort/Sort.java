@@ -5,15 +5,17 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 public class Sort<T> {
-    private final String[] filePassArray;
     private ArrayList<Scanner> scanners;
     private Comparator<T> comparator;
+    private String mode = "-a";
 
-    public Sort(String[] passArray, String mode) {
-        filePassArray = passArray;
+    private final LinkedList<String> passes;
+
+    public Sort(LinkedList<String> passes, String mode) {
+        this.passes = passes;
         scanners = new ArrayList<>();
 
-        for (String s : passArray) {
+        for (String s : passes) {
             try {
                 scanners.add(new Scanner(new FileInputStream(s)));
             } catch (FileNotFoundException e) {
@@ -50,7 +52,7 @@ public class Sort<T> {
                 System.out.println(data);
                 lastData = data;
             } else {
-                System.out.println("Ошибка! Нарушен порядок сортировки в документе: " + filePassArray[index] +
+                System.out.println("Ошибка! Нарушен порядок сортировки в документе: " + passes.get(index) +
                         "\n Элемент: " + data + " - пропущен");
             }
 
