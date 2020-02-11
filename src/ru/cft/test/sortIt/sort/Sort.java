@@ -1,18 +1,42 @@
 package ru.cft.test.sortIt.sort;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.*;
 
-public class Sort<T> {
+public class Sort {
     private ArrayList<Scanner> scanners;
     private Comparator<String> comparator;
-    private String mode = "-a";
+    private String outFileName;
 
-    private final LinkedList<String> passes;
+    private final String dataType;
+    private final String sortingMode;
+    private final String[] passes;
 
-    public Sort(LinkedList<String> passes, String mode) {
-        this.passes = passes;
+    public Sort(String sortingMode, String dataType, String outFileName, String[] passes) {
+        this.outFileName = outFileName;
+
+        if (dataType.equals("-s") || dataType.equals("-i")) {
+            this.dataType = dataType;
+        } else {
+            throw new IllegalArgumentException("Направильный параметр типа данных!");
+        }
+
+        if (sortingMode.equals("-d")) {
+            this.sortingMode = sortingMode;
+        } else {
+            this.sortingMode = "-a";
+        }
+
+        if (passes.length == 0) {
+            throw new IllegalArgumentException("Необходимо не менее одного имени входного файла!");
+        }
+
+        if (outFileName.isEmpty()) {
+            throw new IllegalArgumentException("Укажите название выходного файла!");
+        }
+
+        this.passes = Arrays.copyOf(passes, passes.length);
+
         scanners = new ArrayList<>();
 
         for (String s : passes) {
@@ -23,51 +47,98 @@ public class Sort<T> {
             }
         }
 
-        createComparator(mode);
+        createComparator();
     }
 
-    public void sort(String mode2) {
-        ArrayList<String> list = new ArrayList<String>();;
+    public void sort() {
+        try (FileWriter out = new FileWriter(outFileName)) {
+            try {
+                sort(out);
+            } catch (IOException e) {
+                sort();
+            }
+
+        } catch (FileNotFoundException e) {
+            System.out.println("Неправильный выходной путь! Создается out.txt");
+            outFileName = "Out.txt";
+            sort();
+        } catch (IOException e) {
+            System.out.println("Фобработка файла провалилась! Создается out.txt");
+            outFileName = "Out.txt";
+            sort();
+        }
+    }
+
+    private void sort(FileWriter out) throws IOException {
+        ArrayList<String> list = new ArrayList<>(scanners.size());
         String data;
-
-        scanners.forEach(e -> list.add(e.nextLine()));
-
-
         String lastData = null;
+
+        for (int i = 0; i < scanners.size(); i++) {
+            String nextLine = readNext(i);
+
+            if (nextLine != null) {
+                list.add(nextLine);
+            } else {
+                i--;
+            }
+        }
+
         int index;
 
         while (!list.isEmpty()) {
             index = 0;
-
             data = list.get(0);
 
             for (int i = 0; i < list.size(); i++) {
-
-                if (comparator.compare(list.get(i),  data) < 0) {
-
+                if (comparator.compare(list.get(i), data) < 0) {
                     data = list.get(i);
                     index = i;
                 }
             }
 
             if (comparator.compare(lastData, data) <= 0) {
+                out.write(data + "\n");
                 System.out.println(data);
                 lastData = data;
             } else {
-                System.out.println("Ошибка! Нарушен порядок сортировки в документе: " + passes.get(index) +
+                System.out.println("Ошибка! Нарушен порядок сортировки в документе: " + passes[index] +
                         "\n Элемент: " + data + " - пропущен");
             }
 
-            if (scanners.get(index).hasNext()) {
-                list.set(index, scanners.get(index).nextLine());
+            String nextList = readNext(index);
+
+            if (nextList != null) {
+                list.set(index, nextList);
             } else {
-                scanners.remove(index);
                 list.remove(index);
             }
         }
     }
 
-    private void createComparator(String mode) {
+    private boolean intCheck(String line) {
+        try {
+            Integer.valueOf(line);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private String readNext(int index) {
+        while (scanners.get(index).hasNext()) {
+            String nextList = scanners.get(index).nextLine();
+
+            if (intCheck(nextList) || dataType.equals("-s")) {
+                return nextList;
+            }
+        }
+
+        scanners.remove(index);
+        return null;
+    }
+
+    private void createComparator() {
         this.comparator = (o1, o2) -> {
             if (o1 == null && o2 == null) {
                 return 0;
@@ -81,7 +152,12 @@ public class Sort<T> {
                 return 1;
             }
 
-            return mode.equals("-d")?((Comparable<String>) o2).compareTo(o1):((Comparable<String>) o1).compareTo(o2);
+            if (dataType.equals("-i")) {
+                return sortingMode.equals("-d") ? Integer.valueOf(o2).compareTo(Integer.valueOf(o1)) :
+                        Integer.valueOf(o1).compareTo(Integer.valueOf(o2));
+            }
+
+            return sortingMode.equals("-d") ? o2.compareTo(o1) : o1.compareTo(o2);
         };
     }
 }
