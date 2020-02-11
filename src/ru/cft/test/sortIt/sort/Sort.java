@@ -36,14 +36,13 @@ public class Sort {
         }
 
         this.passes = Arrays.copyOf(passes, passes.length);
-
         scanners = new ArrayList<>();
 
-        for (String s : passes) {
+        for (String fileName : passes) {
             try {
-                scanners.add(new Scanner(new FileInputStream(s)));
+                scanners.add(new Scanner(new FileInputStream(fileName)));
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                System.out.println("не найден файл: " + fileName);
             }
         }
 
@@ -99,7 +98,7 @@ public class Sort {
 
             if (comparator.compare(lastData, data) <= 0) {
                 out.write(data + "\n");
-                System.out.println(data);
+
                 lastData = data;
             } else {
                 System.out.println("Ошибка! Нарушен порядок сортировки в документе: " + passes[index] +
