@@ -18,7 +18,7 @@ public class Sort {
         if (dataType.equals("-s") || dataType.equals("-i")) {
             this.dataType = dataType;
         } else {
-            throw new IllegalArgumentException("Направильный параметр типа данных!");
+            throw new IllegalArgumentException("Направильный параметр тип данных!");
         }
 
         if (sortingMode.equals("-d")) {
