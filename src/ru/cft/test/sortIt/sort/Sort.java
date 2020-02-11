@@ -56,7 +56,6 @@ public class Sort {
             } catch (IOException e) {
                 sort();
             }
-
         } catch (FileNotFoundException e) {
             System.out.println("Неправильный выходной путь! Создается out.txt");
             outFileName = "Out.txt";
