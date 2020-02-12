@@ -6,7 +6,6 @@ import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) {
-
         if (args.length > 3 && args[0].equals("-d")) {
             new Sort(args[0], args[1], args[2], Arrays.copyOfRange(args, 3, args.length)).sort();
         } else if (args.length > 2) {
