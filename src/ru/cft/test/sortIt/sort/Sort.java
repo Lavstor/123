@@ -95,10 +95,6 @@ public class Sort {
                 }
             }
 
-            if (lastData == null) {
-                lastData = data;
-            }
-
             if (comparator.compare(lastData, data) <= 0) {
                 out.write(data + "\n");
 
@@ -131,8 +127,10 @@ public class Sort {
         while (scanners.get(index).hasNext()) {
             String nextList = scanners.get(index).nextLine();
 
-            if (intCheck(nextList) || dataType.equals("-s")) {
+            if (dataType.equals("-s") || intCheck(nextList)) {
                 return nextList;
+            } else {
+                System.out.println("Ошибка в типе данных! Данные пропущены: \"" + nextList + "\" Файл: " + passes[index]);
             }
         }
 
@@ -142,6 +140,18 @@ public class Sort {
 
     private void createComparator() {
         this.comparator = (o1, o2) -> {
+            if (o1 == null && o2 == null) {
+                return 0;
+            }
+
+            if (o1 == null) {
+                return -1;
+            }
+
+            if (o2 == null) {
+                return 1;
+            }
+
             if (dataType.equals("-i")) {
                 return sortingMode.equals("-d") ? Integer.valueOf(o2).compareTo(Integer.valueOf(o1)) :
                         Integer.valueOf(o1).compareTo(Integer.valueOf(o2));
